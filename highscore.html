@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>High Score</title>
+        <meta name = "viewport" content = "width = device-width">
+        <meta name="viewport" content="width = 320">
+        <style>
+            @font-face {
+                font-family: munro;
+                src: url('http://flattr.github.com/flattr-highscore-widget/munro/munro.ttf');
+            }
+            * {
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                margin: 0 auto;
+                width: 320px;
+                font: 17pt munro, DejaVuSansMonoBook, Helvetica, sans-serif;
+                background: black;
+                color: white;
+                text-transform: uppercase;
+            }
+            h1 {
+                padding: 10px;
+                text-align: center;
+            }
+            a {
+                color: white;
+                font-size: 14px;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            .things {
+                margin: 0;
+                padding: 0;
+            }
+            .things span {
+                display: block;
+            }
+            .things tr {
+                position: relative;
+                margin: 10px 0;
+                height: 60px;
+                padding: 10px 100px 10px 10px;
+                list-style-type: none;
+                overflow: hidden;
+            }
+            .things .title {
+                text-align: center;
+                margin: 0 5px;
+            }
+            .things .nr {
+                padding-left: 10px;
+                font-weight: bold;
+            }
+            .things .button {
+            }
+        </style>
+    </head>
+    <body>
+        <h1>High Score</h1>
+
+        <table class="things">
+            <tbody>
+            </tbody>
+        </table>
+
+        <script type="text/javascript">
+
+            function injectFlattrScript() {
+                var s = document.createElement('script');
+                var t = document.getElementsByTagName('script')[0];
+
+                s.type = 'text/javascript';
+                s.async = true;
+                s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+
+                t.parentNode.insertBefore(s, t);
+            }
+
+            function extractQueryStringArgs() {
+                var parts = location.href.split('/');
+                var i;
+                var j;
+                var part;
+                var ret = {};
+                for (i = 0; i < parts.length; i += 1) {
+                    var part = parts[i];
+                    if (part && part[0] === '?') {
+                        parts = part.substring(1).split('&');
+                        for (j = 0; j < parts.length; j += 1) {
+                            part = parts[j];
+                            part = part.split('=');
+                            if (part.length === 2) {
+                                ret[part[0]] = part[1];
+                            }
+                        }
+                        break;
+                    }
+                }
+                return ret;
+            }
+
+            var args = {
+                sort: 'flattrs'
+            };
+
+            var paramsInUrl = extractQueryStringArgs();
+            for (key in paramsInUrl) {
+                args[key] = paramsInUrl[key];
+            }
+
+            var qs = [];
+            for (key in args) {
+                if (args.hasOwnProperty(key)) {
+                    qs.push(encodeURIComponent(key) + '=' + encodeURIComponent(args[key]));
+                }
+            }
+            qs = qs.join('&');
+
+            var thingsList = document.querySelector('table.things');
+            var xhr = new XMLHttpRequest();
+            var url = 'https://api.flattr.com/rest/v2/things/search?' + qs;
+
+            xhr.open('GET', url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+                    var response = JSON.parse(xhr.responseText);
+                    var fragment = document.createDocumentFragment();
+
+                    for (var i = 0; i < response.things.length; i += 1) {
+                        var thing = response.things[i];
+                        var tr = document.createElement('tr');
+                        var nr = document.createElement('td');
+                        var title = document.createElement('td');
+                        var button = document.createElement('td');
+                        var a1 = document.createElement('a');
+                        var a2 = document.createElement('a');
+
+                        nr.setAttribute('class', 'nr');
+                        nr.innerHTML = i + 1 + '.';
+
+                        a1.setAttribute('href', thing['url']);
+                        a1.setAttribute('target', '_blank');
+                        a1.innerHTML = thing.title;
+                        title.setAttribute('class', 'title');
+                        title.appendChild(a1);
+
+                        a2.setAttribute('class', 'FlattrButton');
+                        a2.setAttribute('href', thing['url']);
+                        a2.setAttribute('rev', 'flattr;button:compact');
+                        button.setAttribute('class', 'button');
+                        button.appendChild(a2);
+
+                        tr.appendChild(nr);
+                        tr.appendChild(title);
+                        tr.appendChild(button);
+
+                        fragment.appendChild(tr);
+                    }
+
+                    thingsList.appendChild(fragment);
+                    injectFlattrScript();
+                }
+            };
+            xhr.send();
+        </script>
+    </body>
+</html>

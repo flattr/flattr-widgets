@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<style rel="stylesheet" type="text/css">
+			body, * {
+				margin: 0;
+				padding: 0;
+				font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+				line-height: 1.28;
+				font-size: 11px;
+			}
+			a {
+				color: #666;
+				text-decoration: none;
+			}
+			a:hover {
+				text-decoration: underline;
+			}
+			#wrapper {
+				border: 1px solid #ccc;
+				padding: 10px;
+			}
+			.section.top .title-and-button {
+				vertical-align: top;
+				display: inline-block;
+				max-width: 224px;
+			}
+			.section.top .title {
+				display: block;
+				font-weight: bold;
+				font-size: 16px;
+			}
+			.section.top .logo {
+				border: 1px solid #ccc;
+				display: inline-block;
+				vertical-align: top;
+			}
+			.section.top .logo:hover {
+				text-decoration: none;
+			}
+			.people {
+				min-height: 100px;
+				border-top: 1px solid #ccc;
+				border-bottom: 1px solid #ccc;
+				margin: 10px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="wrapper">
+			<div class="section top">
+				<a class="logo" href="#" target="_blank">
+				</a>
+				<div class="title-and-button">
+					<a class="title" href="#" target="_blank"></a>
+					<a class="FlattrButton" rev="flattr;button:compact" href="#"></a>
+				</div>
+			</div>
+			<ul class="section people">
+			</ul>
+			<div class="section footer">
+				<a href="https://flattr.com/widgets/thing" target="_blank">Flattr social widget</a>
+			</div>
+		</div>
+        <script type="text/javascript">
+
+            function injectFlattrScript() {
+                var s = document.createElement('script');
+                var t = document.getElementsByTagName('script')[0];
+
+                s.type = 'text/javascript';
+                s.async = true;
+                s.src = 'http://api.flattr.com/js/0.6/load.js?mode=auto';
+
+                t.parentNode.insertBefore(s, t);
+            }
+
+            function extractThingIdFromUrl(url) {
+				var matches = url.match('thing=([0-9]*)');
+				var ret = false;
+				if (matches && matches.length === 2) {
+					ret = matches[1];
+				}
+				return ret;
+            }
+
+			var thingId = extractThingIdFromUrl(location.href);
+            var xhr = new XMLHttpRequest();
+            var url = 'https://api.flattr.com/rest/v2/things/' + thingId;
+
+            xhr.open('GET', url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+                    var response = JSON.parse(xhr.responseText);
+
+					document.querySelector('.top .title').innerHTML = response.title;
+					document.querySelector('.top .title').setAttribute('href', response.link);
+					document.querySelector('.top .logo').setAttribute('href', response.link);
+					document.querySelector('.top .FlattrButton').setAttribute('href', response['url']);
+
+					var img = document.createElement('img');
+					img.setAttribute('width', '40');
+					img.setAttribute('height', '40');
+					img.setAttribute('src', response.image);
+
+					document.querySelector('.top .logo').appendChild(img);
+
+                    injectFlattrScript();
+                }
+            };
+            xhr.send();
+        </script>
+	</body>
+</html>
