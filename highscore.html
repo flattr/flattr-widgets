@@ -83,24 +83,20 @@
             }
 
             function extractQueryStringArgs() {
-                var parts = location.href.split('/');
+                var parts = location.href.split('?');
                 var i;
                 var j;
                 var part;
                 var ret = {};
-                for (i = 0; i < parts.length; i += 1) {
-                    var part = parts[i];
-                    if (part && part[0] === '?') {
-                        parts = part.substring(1).split('&');
-                        for (j = 0; j < parts.length; j += 1) {
-                            part = parts[j];
-                            part = part.split('=');
-                            if (part.length === 2) {
-                                ret[part[0]] = part[1];
-                            }
-                        }
-                        break;
-                    }
+				if (parts && parts.length === 2) {
+					parts = parts[1].split('&');
+					for (j = 0; j < parts.length; j += 1) {
+						part = parts[j];
+						part = part.split('=');
+						if (part.length === 2) {
+							ret[part[0]] = part[1];
+						}
+					}
                 }
                 return ret;
             }
