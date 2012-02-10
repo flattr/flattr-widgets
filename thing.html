@@ -3,6 +3,9 @@
 <html>
 	<head>
 		<style rel="stylesheet" type="text/css">
+			body {
+				width: 292px;
+			}
 			body, * {
 				margin: 0;
 				padding: 0;
@@ -21,10 +24,32 @@
 				border: 1px solid #ccc;
 				padding: 10px;
 			}
+			.user {
+				display: inline-block;
+				width: 50px;
+				height: 70px;
+				margin-right: 5px;
+				vertical-align: top;
+				text-align: center;
+				overflow: hidden;
+			}
+			.user:nth-child(5n) {
+				margin-right: 0;
+			}
+			.user img {
+				background: #ccc;
+				width: 48px;
+				height: 48px;
+				margin-right: 5px;
+			}
+			.user span {
+				font-size: 9px;
+			}
 			.section.top .title-and-button {
+				margin-left: 5px;
 				vertical-align: top;
 				display: inline-block;
-				max-width: 224px;
+				max-width: 219px;
 			}
 			.section.top .title {
 				display: block;
@@ -39,11 +64,12 @@
 			.section.top .logo:hover {
 				text-decoration: none;
 			}
-			.people {
+			.section.people {
 				min-height: 100px;
 				border-top: 1px solid #ccc;
 				border-bottom: 1px solid #ccc;
 				margin: 10px 0;
+				padding-top: 5px;
 			}
 		</style>
 	</head>
@@ -107,9 +133,51 @@
 					document.querySelector('.top .logo').appendChild(img);
 
                     injectFlattrScript();
+					loadLatestSupporters(thingId);
                 }
             };
             xhr.send();
+
+			function createUserHtml(user) {
+				var a = document.createElement('a');
+				var img = document.createElement('img');
+				var username = document.createElement('span');
+
+				a.setAttribute('href', user.link);
+				a.setAttribute('target', '_blank');
+				a.setAttribute('class', 'user');
+				img.setAttribute('src', user.avatar);
+				username.innerHTML = user.firstname || user.username;
+
+				a.appendChild(img);
+				a.appendChild(username);
+
+				return a;
+			}
+
+			function loadLatestSupporters(thingId) {
+				var xhr = new XMLHttpRequest();
+				var url = 'https://api.flattr.com/rest/v2/things/' + thingId + '/flattrs?full';
+
+				xhr.open('GET', url, true);
+				xhr.onreadystatechange = function() {
+					if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+						var response = JSON.parse(xhr.responseText);
+						var i = 0;
+						var user;
+						var fragment = document.createDocumentFragment();
+						for (i = 0; i < response.length; i += 1) {
+							user = response[i]['owner'];
+							if (user.avatar) {
+								fragment.appendChild(createUserHtml(user));
+							}
+						}
+						document.querySelector('.section.people').appendChild(fragment);
+					}
+				};
+
+				xhr.send();
+			}
         </script>
 	</body>
 </html>
