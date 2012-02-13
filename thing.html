@@ -22,7 +22,6 @@
 			}
 			#wrapper {
 				border: 1px solid #ccc;
-				padding: 10px;
 			}
 			.user {
 				display: inline-block;
@@ -45,6 +44,20 @@
 			.user span {
 				font-size: 9px;
 			}
+            .section {
+				margin: 10px;
+            }
+            .section.header {
+                margin: 0;
+                padding-bottom: 10px;
+				padding: 10px;
+                background: rgb(126, 174, 72);
+                color: white;
+            }
+            .section.header span {
+                font-size: 14px;
+                font-weight: bold;
+            }
 			.section.top .title-and-button {
 				margin-left: 5px;
 				vertical-align: top;
@@ -71,13 +84,21 @@
 				min-height: 100px;
 				border-top: 1px solid #ccc;
 				border-bottom: 1px solid #ccc;
-				margin: 10px 0;
 				padding-top: 5px;
 			}
+            .section.footer a {
+                padding-left: 20px;
+                background: url(/favicon.ico) no-repeat center left;
+                display: block;
+                line-height: 16px;
+            }
 		</style>
 	</head>
 	<body>
 		<div id="wrapper">
+            <div class="section header">
+                <span>Support us</span>
+            </div>
 			<div class="section top">
 				<a class="logo" href="#" target="_blank">
 				</a>
@@ -89,7 +110,7 @@
 			<ul class="section people">
 			</ul>
 			<div class="section footer">
-				<a href="https://flattr.com/widgets/thing" target="_blank">Flattr social widget</a>
+				<a href="https://flattr.com/" target="_blank">Flattr - Social micro-donations</a>
 			</div>
 		</div>
         <script type="text/javascript">
