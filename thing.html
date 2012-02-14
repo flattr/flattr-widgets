@@ -115,6 +115,11 @@
 			</div>
 		</div>
         <script type="text/javascript">
+			var showHeader = location.href.indexOf('noheader') === -1;
+
+			if (!showHeader) {
+				document.querySelector('.section.header').style.display = 'none';
+			}
 
             function injectFlattrScript() {
                 var s = document.createElement('script');
